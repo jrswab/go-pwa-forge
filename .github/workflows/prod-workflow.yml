@@ -1,0 +1,84 @@
+name: To Production Workflow
+run-name: Mering To Master 🚀
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '>=1.20'
+      - name: Install Golint
+        run: go install golang.org/x/lint/golint@latest
+      - name: Run Linter
+        run: golint ./...
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    if: success()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '>=1.20'
+      - name: linting
+        run: |
+          go test -race -vet=off ./...
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: success()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - uses: actions/setup-go@v4
+ guildd       with:
+          go-version: '>=1.20'
+
+      - name: Install Tailwind CSS
+        run: |
+          npm install tailwindcss
+          npx tailwindcss init -p
+
+      - name: Install Templ
+        run: go install github.com/a-h/templ/cmd/templ@latest
+
+      - name: Get dependencies
+        run: go get -t -u ./...
+
+      - name: Build templates and CSS
+        run: make pipeline
+
+      - name: Build Server Binary
+        run: GOOS=openbsd GOARCH=amd64 go build -o server cmd/main.go
+  
+      - name: Copy app files to server
+        if: success()
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "server,static/*,media/*"
+          target: /var/www/
+
+      - name: Launch new binary
+        if: success()
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PASS: ${{ secrets.REDIS_PASS }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: REDIS_HOST,REDIS_PASS
+          script: rcctl stop app && rcctl start app
+
