@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.cdnfonts.com/css/atkinson-hyperlegible');
+
+/* Mobile first */
+
+html {
+    background-color: #f1f5f9; /* coolGray-100 */
+    color: #1f2937; /* coolGray-800 */
+    font-size: 1rem;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+                                                
+}
+
+body {
+    max-width: 99%;
+    max-width: 99vw;
+    max-width: 99dvw;
+}
+
+
+/* For desktop: */
+@media only screen and (min-width: 1024px) {
+    body {
+        max-width: 33%; /* fallback if client does not support vw */
+        max-width: 33vw; /* fallback if client does not support dvw */
+        max-width: 33dvw;
+        margin: 0 auto;
+    }
+
+    .card {
+        max-width: 50%; /* fallback if client does not support vw */
+        max-width: 50vw; /* fallback if client does not support dvw */
+        max-width: 50dvw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    video {
+        max-width: 50%; /* fallback if client does not support vw */
+        max-width: 50vw; /* fallback if client does not support dvw */
+        max-width: 50dvw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .webapp-alert {
+        display: block;
+        max-width: 50%; /* fallback if client does not support vw */
+        max-width: 50vw; /* fallback if client does not support dvw */
+        max-width: 50dvw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .content {
+        margin: auto;
+        max-width: 50%; /* fallback if client does not support vw */
+        max-width: 50vw; /* fallback if client does not support dvw */
+        max-width: 50dvw;
+    }
+}
+
+/* Only applies when running as a progress webapp */
+@media all and (display-mode: standalone) {
+  #webapp-alert {
+    display: none;
+  }
+}

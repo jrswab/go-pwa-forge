@@ -5,6 +5,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/jrswab/go-htmx-forge/config"
+	"github.com/jrswab/go-htmx-forge/handlers"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -31,10 +34,8 @@ func main() {
 	// Set the output of the log package to the log file
 	log.SetOutput(file)
 
-	/*
-		cfg := new(config.Config)
-		cfg.Load()
-	*/
+	cfg := new(config.Config)
+	cfg.Load()
 
 	app := echo.New()
 	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -54,7 +55,8 @@ func main() {
 	app.Static("/media", "media")
 
 	// Add handlers here as needed
-	app.GET("/", home.Load)
+	h := handlers.HomeHandler{}
+	app.GET("/", h.Load)
 
 	err = app.Start(port)
 	if err != nil {

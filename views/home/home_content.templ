@@ -1,0 +1,34 @@
+package home
+
+import "github.com/jrswab/go-htmx-forge/views/layout"
+
+templ Show() {
+    @layout.Base("Welcome to the Site") {
+        <p class="text-center"></p>
+        <p class="text-center mt-6"></p>
+        <div id="webapp-alert" class="relative mt-6 mb-4 p-4 bg-gray-200 text-gray-900 border rounded border-gray-500" role="alert">
+            <p style="font-size: 1.2rem"><b>👋 Hey, this is a progressive web app!</b></p>
+            <p>This means you can "install" it to your device and use it just like any other app.</p>
+            <p id="webapp-install-text">To add this app to your home screen look for "Install App", "Add to Home Screen", or something similar, in your browser options.</p>
+        </div>
+        <script type="text/javascript" src="/static/get_useragent.js"></script>
+        <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function() {
+                // Add the device-specific class to the body element
+                const deviceType = getDeviceType();
+                document.body.classList.add(deviceType);
+
+                // Set device-specific instructions
+                const instructions = document.getElementById("webapp-install-text");
+
+                if (deviceType === "ios") {
+                    instructions.textContent = "To add this app to your home screen, tap the share icon and select 'Add to Home Screen'.";
+                }
+                
+                if (deviceType === "android") {
+                    instructions.textContent = "To add this app to your home screen, tap your browser's menu icon and select 'Install The Site...'";
+                } 
+            });
+        </script>
+    }
+}
