@@ -1,0 +1,30 @@
+#!/bin/ksh
+#
+# /etc/rc.d/appd
+#
+
+# The directory where cmd/main.go lives:
+daemon="/var/www/server"
+daemon_execdir="/var/www"
+
+. /etc/rc.d/rc.subr
+
+rc_bg=YES
+rc_reload=NO
+rc_restart=YES
+
+rc_start() {
+        export REDIS_HOST=""
+        export REDIS_PASS=""
+
+		export DB_HOST=""
+		export DB_PORT=""
+		export DB_USER=""
+		export DB_PASS=""
+		export DB_NAME=""
+
+        cd $daemon_execdir
+        $daemon & 2>&1
+}
+
+rc_cmd $1
