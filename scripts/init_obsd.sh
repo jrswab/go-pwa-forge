@@ -18,3 +18,9 @@ chmod 755 "/etc/rc.d/$RCFILE"
 rcctl enable "$RCFILE"
 
 "Service $RCFILE has been installed and enabled"
+
+"Installing zsh"
+pkg_add zsh
+
+"Setting ZSH to default shell"
+chsh -s zsh
