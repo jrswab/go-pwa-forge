@@ -44,8 +44,7 @@ jobs:
 
       - name: Install Tailwind CSS
         run: |
-          npm install tailwindcss
-          npx tailwindcss init -p
+          npm install tailwindcss @tailwindcss/cli
 
       - name: Install Templ
         run: go install github.com/a-h/templ/cmd/templ@latest
