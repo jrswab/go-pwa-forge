@@ -84,5 +84,5 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: REDIS_HOST,REDIS_PASS,DB_HOST,BD_PASS,DB_USER,DB_PORT,DB_NAME
-          script: rcctl stop app && rcctl start app
+          script: rcctl stop appd && rcctl start appd
 
