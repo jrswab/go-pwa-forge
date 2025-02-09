@@ -1,16 +1,21 @@
 package handlers
 
 import (
+	"net/http"
+
+	"github.com/a-h/templ"
 	"github.com/jrswab/go-htmx-forge/views/home"
-	"github.com/labstack/echo/v4"
 )
 
-// Visit https://echo.labstack.com/docs for more information.
+func render(w http.ResponseWriter, r *http.Request, component templ.Component) {
+	err := component.Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
 
-// HomeHandler is the method receiver for loading the home page.
 type HomeHandler struct{}
 
-// Load renders the home page.
-func (h HomeHandler) Load(c echo.Context) error {
-	return render(c, home.Show())
+func (h HomeHandler) Load(w http.ResponseWriter, r *http.Request) {
+	render(w, r, home.Show())
 }

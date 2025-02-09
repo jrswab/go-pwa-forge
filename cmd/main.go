@@ -3,13 +3,15 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/jrswab/go-htmx-forge/config"
 	"github.com/jrswab/go-htmx-forge/handlers"
 
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 func main() {
@@ -37,29 +39,39 @@ func main() {
 	cfg := new(config.Config)
 	cfg.Load()
 
-	app := echo.New()
-	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		// TODO: Change site name to match
-		AllowOrigins: []string{"https://hda.site.com", "https://app.site.com"},
-		AllowMethods: []string{"GET", "OPTIONS"},
-		AllowHeaders: []string{
-			echo.HeaderOrigin,
-			echo.HeaderContentType,
-			echo.HeaderAccept,
+	// Initialize Chi router
+	r := chi.NewRouter()
+
+	// CORS middleware
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"https://hda.site.com", "https://app.site.com"},
+		AllowedMethods: []string{"GET", "OPTIONS"},
+		AllowedHeaders: []string{
+			"Accept",
+			"Content-Type",
+			"Origin",
 			"hx-request",
 		},
 	}))
 
-	// Load directory paths:
-	app.Static("/static", "static")
-	app.Static("/media", "media")
+	// Additional middleware
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 
-	// Add handlers here as needed
+	// Static file servers
+	fileServer := http.FileServer(http.Dir("static"))
+	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
+
+	mediaServer := http.FileServer(http.Dir("media"))
+	r.Handle("/media/*", http.StripPrefix("/media/", mediaServer))
+
+	// Routes
 	h := handlers.HomeHandler{}
-	app.GET("/", h.Load)
+	r.Get("/", h.Load)
 
-	err = app.Start(port)
-	if err != nil {
+	// Start server
+	log.Printf("Starting server on port %s", port)
+	if err := http.ListenAndServe(port, r); err != nil {
 		log.Fatal(err)
 	}
 }
