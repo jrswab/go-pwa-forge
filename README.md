@@ -4,11 +4,12 @@ A blazing-fast Go template combining Echo, HTMX, and templ for building modern h
 
 ## Features
 
-- **Go Echo Framework** - High performance, minimalist web framework
+- **Chi** - High performance, minimalist web framework
 - **Templ Integration** - Type-safe HTML templates for Go
 - **TailwindCSS** - Utility-first CSS framework
 - **OpenBSD Ready** - Configured for OpenBSD deployment
 - **Redis Support** - Prepared for Redis integration
+- **PostgreSQL Support** - Prepared for PostgreSQL integration
 - **GitHub Actions** - Automated PR and Production workflows
 
 ## Quick Start
@@ -45,15 +46,16 @@ Visit `http://localhost:3000` to see your application running.
 ├── config/
 │   └── config.go                 # Application configuration
 ├── handlers/
-│   ├── handlers.go               # Handlers for serving pages
-│   └── utils.go                  # Application utilities
+│   └── handlers.go               # Handlers for serving pages
 ├── logs/                         # Application logs
+│   └── site.log                  # The actual log file
 ├── media/                        # Media files
 ├── static/                       # Static assets
 │   ├── input.css                 # TailwindCSS input
 │   ├── manifest.json             # PWA Metadata for your site
 │   ├── offline.html              # What to serve when the client is offline
 │   ├── output.css                # Generated CSS
+│   ├── htmx.min.js               # Currently v2.0.4
 │   └── sw.js                     # Specific Javascript for the PWA Service Worker
 ├── views/             
 │   ├── home/        
@@ -69,7 +71,6 @@ Visit `http://localhost:3000` to see your application running.
 ### Prerequisites
 
 - Go 1.20 or higher
-- HTMX (dowload and save into `static/`)
 - Make
 
 ### Available Commands
@@ -99,6 +100,11 @@ The template includes two GitHub Actions workflows:
 - `SSH_PRIVATE_KEY` - SSH private key
 - `REDIS_HOST` - Redis server hostname (production only)
 - `REDIS_PASS` - Redis password (production only)
+- `BD_USER` - PostgreSQL user
+- `BD_PASS` - PostgreSQL password
+- `DB_HOST` - PostgreSQL host
+- `DB_PORT` - PostgreSQL port
+- `DB_NAME` - PostgreSQL database name
 
 ## Contributing
 
