@@ -1,10 +1,13 @@
 package main
 
 import (
+	"embed"
 	"flag"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/jrswab/go-htmx-forge/config"
 	"github.com/jrswab/go-htmx-forge/handlers"
@@ -13,6 +16,11 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
+
+// To include dot (hidden) files use static/*
+//
+//go:embed static
+var static embed.FS
 
 func main() {
 	var (
@@ -58,10 +66,21 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	// Static file servers
-	fileServer := http.FileServer(http.Dir("static"))
-	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
+	// Get paths for all files in the embeded static directory
+	staticFS, err := fs.Sub(static, "static")
+	if err != nil {
+		log.Fatal(err)
+	}
+	r.Handle("/static/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Make sure .js files have a content type of application/javascript
+		if strings.HasSuffix(r.URL.Path, ".js") {
+			w.Header().Set("Content-Type", "application/javascript")
+		}
 
+		http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))).ServeHTTP(w, r)
+	}))
+
+	// Serve media files
 	mediaServer := http.FileServer(http.Dir("media"))
 	r.Handle("/media/*", http.StripPrefix("/media/", mediaServer))
 
