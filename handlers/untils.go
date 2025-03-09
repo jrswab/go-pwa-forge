@@ -21,7 +21,7 @@ func render(w http.ResponseWriter, r *http.Request, component templ.Component, s
 // Switch to SameSiteLaxMode for more flexibility.
 //
 // See https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-cookie-same-site-00 for more information.
-func setPersistentCookie(w http.ResponseWriter, key, val string) {
+func setPersistentCookie(w *http.ResponseWriter, key, val string) {
 	cookie := http.Cookie{
 		Name:     key,
 		Value:    val,
@@ -32,5 +32,5 @@ func setPersistentCookie(w http.ResponseWriter, key, val string) {
 		SameSite: http.SameSiteStrictMode,
 	}
 
-	http.SetCookie(w, &cookie)
+	http.SetCookie(*w, &cookie)
 }
