@@ -1,11 +1,11 @@
 # go-htmx-forge
 
-A blazing-fast Go template combining Echo, HTMX, and templ for building modern hypermedia-driven web applications with minimal JavaScript and maximum efficiency.
+A blazing-fast Go template combining Chi and templ for building modern hypermedia-driven web applications with minimal JavaScript and maximum efficiency.
 
 ## Features
 
 - **Chi** - High performance, minimalist web framework
-- **Templ Integration** - Type-safe HTML templates for Go
+- **Templ** - Type-safe HTML templates for Go
 - **TailwindCSS** - Utility-first CSS framework
 - **OpenBSD Ready** - Configured for OpenBSD deployment
 - **Redis Support** - Prepared for Redis integration
