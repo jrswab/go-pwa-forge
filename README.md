@@ -1,4 +1,4 @@
-# go-htmx-forge
+# go-pwa-forge
 
 A Go template combining Chi and templ for building modern hypermedia-driven web applications with minimal JavaScript and maximum efficiency.
 
