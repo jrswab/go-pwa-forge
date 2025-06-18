@@ -50,6 +50,23 @@ func main() {
 	// Initialize Chi router
 	r := chi.NewRouter()
 
+	// Brotli Compression:
+	c := middleware.NewCompressor(brotli.DefaultCompression, // default level = 6
+		"text/html",
+		"application/json",
+	)
+
+	c.SetEncoder("br", func(w io.Writer, level int) io.Writer {
+		// NewWriterV2 currently supports levels 0-7 only.
+		if level > 7 {
+			level = brotli.DefaultCompression
+		}
+		return brotli.NewWriterV2(w, level) // v2 encoder
+	})
+
+	// Enable brotli compression for use
+	r.Use(c.Handler)
+
 	// CORS middleware
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"https://hda.site.com", "https://app.site.com"},
