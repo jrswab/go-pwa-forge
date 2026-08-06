@@ -2,19 +2,7 @@ package handlers
 
 import (
 	"net/http"
-
-	"github.com/a-h/templ"
 )
-
-// render takes in a Templ component and returns the HTML to the client.
-func render(w http.ResponseWriter, r *http.Request, component templ.Component, status int) {
-	w.WriteHeader(status)
-
-	err := component.Render(r.Context(), w)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
 
 // setCookie creates a cookie which does not expire.
 // SameSite is set to strict to avoid cookies being passod from other domains.

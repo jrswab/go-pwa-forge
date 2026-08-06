@@ -7,14 +7,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
+	"path/filepath"
 
 	"github.com/jrswab/go-htmx-forge/config"
-	"github.com/jrswab/go-htmx-forge/handlers"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/cors"
+	"github.com/jrswab/go-htmx-forge/internal/httpapp"
 )
 
 // To include dot (hidden) files use static/*
@@ -22,6 +18,7 @@ import (
 //go:embed static
 var static embed.FS
 
+// @anchor:main:lifecycle flags, config, logging, FS rooting, listener
 func main() {
 	var (
 		port    = ":80"
@@ -34,8 +31,7 @@ func main() {
 		port = ":3000"
 	}
 
-	// Open or create a log file
-	file, err := os.OpenFile("logs/site.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	file, err := openLogFile("logs/site.log")
 	if err != nil {
 		log.Fatalf("Failed to open log file: %v", err)
 	}
@@ -45,69 +41,31 @@ func main() {
 	log.SetOutput(file)
 
 	cfg := new(config.Config)
-	cfg.Load()
+	if err := cfg.Load(); err != nil {
+		log.Fatalf("config: %v", err)
+	}
 
-	// Initialize Chi router
-	r := chi.NewRouter()
-
-	// Brotli Compression:
-	c := middleware.NewCompressor(brotli.DefaultCompression, // default level = 6
-		"text/html",
-		"application/json",
-	)
-
-	c.SetEncoder("br", func(w io.Writer, level int) io.Writer {
-		// NewWriterV2 currently supports levels 0-7 only.
-		if level > 7 {
-			level = brotli.DefaultCompression
-		}
-		return brotli.NewWriterV2(w, level) // v2 encoder
-	})
-
-	// Enable brotli compression for use
-	r.Use(c.Handler)
-
-	// CORS middleware
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"https://hda.site.com", "https://app.site.com"},
-		AllowedMethods: []string{"GET", "OPTIONS"},
-		AllowedHeaders: []string{
-			"Accept",
-			"Content-Type",
-			"Origin",
-			"hx-request",
-		},
-	}))
-
-	// Additional middleware
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-
-	// Get paths for all files in the embeded static directory
+	// Root filesystems outside request-serving composition.
 	staticFS, err := fs.Sub(static, "static")
 	if err != nil {
 		log.Fatal(err)
 	}
-	r.Handle("/static/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Make sure .js files have a content type of application/javascript
-		if strings.HasSuffix(r.URL.Path, ".js") {
-			w.Header().Set("Content-Type", "application/javascript")
-		}
+	mediaFS := os.DirFS("media")
 
-		http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))).ServeHTTP(w, r)
-	}))
+	handler := httpapp.New(staticFS, mediaFS, cfg.CORSAllowedOrigins)
 
-	// Serve media files
-	mediaServer := http.FileServer(http.Dir("media"))
-	r.Handle("/media/*", http.StripPrefix("/media/", mediaServer))
-
-	// Routes
-	h := handlers.HomeHandler{}
-	r.Get("/", h.Load)
-
-	// Start server
 	log.Printf("Starting server on port %s", port)
-	if err := http.ListenAndServe(port, r); err != nil {
+	if err := http.ListenAndServe(port, handler); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// openLogFile creates the parent directory if needed, then opens/creates the log file.
+func openLogFile(path string) (*os.File, error) {
+	if dir := filepath.Dir(path); dir != "" && dir != "." {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			return nil, err
+		}
+	}
+	return os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
 }
