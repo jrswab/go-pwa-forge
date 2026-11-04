@@ -335,9 +335,11 @@ func TestCompressionGzip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer gr.Close()
 	body, err := io.ReadAll(gr)
 	if err != nil {
+		t.Fatal(err)
+	}
+	if err := gr.Close(); err != nil {
 		t.Fatal(err)
 	}
 	if string(body) != "console.log(1)" {
@@ -363,9 +365,11 @@ func TestCompressionGzip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer gr.Close()
 	homeBody, err := io.ReadAll(gr)
 	if err != nil {
+		t.Fatal(err)
+	}
+	if err := gr.Close(); err != nil {
 		t.Fatal(err)
 	}
 	if !strings.Contains(string(homeBody), "progressive web app") {

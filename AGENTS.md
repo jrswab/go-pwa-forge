@@ -1,52 +1,43 @@
 # AGENTS.md
 
+## Frontend: Datastar
+
+Load the `datastar` skill before changing UI, templates, or handlers that render or stream to the page.
+If the skill is unavailable, read https://data-star.dev/reference/attributes first.
+Datastar first: build each behavior from `data-*` attributes and backend patches.
+Write a `<script>` only for behavior that neither can implement.
+
 ## Working Docs
 
+- Files under `./docs/plans/` and `./docs/notes/` are local and gitignored: not
+committed, not shared through Git, and may be removed when the local workspace
+is cleaned up.
 - Use `./docs/plans/` for ephemeral, non-code planning and implementation working documents.
-- Use `./docs/notes/` for durable project context that should remain useful across agent sessions and context-window resets.
-- Files under `./docs/plans/` and `./docs/notes/` are local and gitignored. They are not committed or shared through Git and may be removed when the local workspace is cleaned up.
+- Use `./docs/notes/` for local context across agent sessions.
 - Keep canonical product and architecture documents directly under `./docs/` unless they are explicitly plans or notes.
+
+## Before Committing
+
+- Use `.agents/skills/changelog/SKILL.md` to write the `CHANGELOG.md` entry.
+- Update `README.md` when setup, commands, configuration, or documented behavior changes.
+- Update `.mem/` when the change establishes or changes a decision.
+- Run `~/.agents/scripts/records-stale-check` and assess each hit against current code.
+  A records review checks `.mem/`, `TAGS.md`, `README.md`, and `CHANGELOG.md` against the code.
 
 ## Anchor Tags
 
-Anchor tags are structured metadata comments that make the repository queryable:
+Anchor tags (`@anchor:`): read `TAGS.md` before planning work or adding/changing an anchor.
 
-```go
-// @anchor:<surface>:<role> [context]
-```
+## Project Memory
 
-- Use native plain-comment syntax.
-- Reuse established surfaces and roles when they describe the same boundary.
-- Tag meaningful boundaries—handlers, service entry points, models,
-  configuration, and integrations—not every helper.
-- Keep context brief.
-- Maintain root `TAGS.md` when adding, removing, or changing boundaries.
-
-When planning work, start with `TAGS.md`, identify affected surfaces, and query
-their anchors (for example, `grep -r "@anchor:billing"`).
-
-## Provenance Log
-
-`LOG.md` is the canonical, tracked record of non-obvious project-level decisions
-and rationale; it is not a changelog. Read relevant entries before changing code
-and treat them as constraints.
-
-When work establishes, changes, or rejects a decision that a future contributor
-could plausibly misunderstand, record the rationale in `LOG.md` before completion.
-Explain why the decision was made and, when useful, which serious alternative was
-rejected. Do not substitute `docs/plans/`, `docs/notes/`, commit messages, or code
-comments for project-level rationale that belongs in `LOG.md`.
-
-Before completing or reviewing work, use `.agents/skills/provenance-log/SKILL.md` when
-rationale may need recording in `LOG.md`. If the skill determines that no entry is
-needed, leave `LOG.md` unchanged; routine progress and ordinary implementation
-details do not belong there.
+`.mem/` is the canonical, tracked record of project decisions and rationale.
+Read `.mem/mem-map.md` first, then the relevant domain files, and treat them as constraints before changing a surface.
+Use `.agents/skills/mem/SKILL.md` for the workflow. Describe current state, not history: Git keeps superseded detail.
 
 ## Completion
 
 Before completion:
 
-- Run the relevant checks and review the final diff.
+- Run `make check`; it passes.
+- Review the final diff.
 - Do not expose secrets or real PII.
-- Update `TAGS.md` and `LOG.md` when their rules require it.
-- Report checks run and any checks that could not be run.

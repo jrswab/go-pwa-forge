@@ -20,7 +20,7 @@ func DecodePostRequest[T any](r *http.Request, v *T) (*T, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer r.Body.Close()
+	defer func() { _ = r.Body.Close() }()
 
 	// Check if the body is empty
 	if len(body) == 0 {
