@@ -21,7 +21,6 @@ cd your-project-name
 
 # Install dependencies
 go mod tidy
-go install github.com/a-h/templ/cmd/templ@latest
 
 # Start development server
 make run
@@ -80,7 +79,7 @@ Visit `http://localhost:3000` to see your application running.
 
 ### Available Commands
 
-- `make gen` - Regenerates `_templ.go` files from `.templ` sources (`templ generate`)
+- `make gen` - Regenerates `_templ.go` files from `.templ` sources. Runs templ at the version pinned in `go.mod` (`go run ... generate`); no local templ install is needed
 - `make lint` - Installs and runs golangci-lint v2.1.6 over `./...`
 - `make test` - Runs `go test -race -v` with a coverage profile (`coverage.out`)
 - `make coverage` - Prints per-function coverage from `coverage.out` (`go tool cover -func`). Run `make test` first; it writes the profile

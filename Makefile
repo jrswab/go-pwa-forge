@@ -11,9 +11,13 @@ endef
 
 ### targets ###
 
+# templ version comes from go.mod, so the generator matches the runtime library.
+# Lazy (=): go list runs only when gen expands the variable.
+TEMPL_VERSION = $(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
+
 gen:
 	$(call banner,Generating templ.go files…)
-	@templ generate
+	@go run github.com/a-h/templ/cmd/templ@$(TEMPL_VERSION) generate
 
 lint:
 	$(call banner,Installing & running GolangCI-Lint…)
