@@ -26,7 +26,7 @@ test:
 
 coverage:
 	$(call banner,Checking code coverage…)
-	@sh .scripts/check_coverage.sh
+	@go tool cover -func=coverage.out
 
 ### Composed targets ###
 

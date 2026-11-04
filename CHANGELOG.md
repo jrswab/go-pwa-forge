@@ -32,5 +32,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `handlers/untils.go`: removed the unused `setPersistentCookie` helper, clearing golangci-lint unused. It had no callers.
 - `.github/workflows/pr-workflow.yml` and `prod-workflow.yml`: the deploy job built with `make pipeline` and `go build cmd/main.go`, both gone. It now runs `make gen` and `go build -o server .`. The npm Tailwind install step is removed; `static/output.css` is committed.
 - `main.go`: a config error is now printed to stderr as well as logged to `logs/site.log`, before the process exits 1.
-- `README.md` Project Structure matches the tracked tree. Development lists the Makefile targets that exist; `make pipeline` is removed. `make coverage` calls `.scripts/check_coverage.sh`, which is not tracked, so it fails.
+- `Makefile` `coverage` target: it called `.scripts/check_coverage.sh`, which is not tracked, so `make coverage` and `make prep` failed. It now runs `go tool cover -func=coverage.out` over the profile that `make test` writes.
+- `README.md` Project Structure matches the tracked tree. Development lists the Makefile targets that exist; `make pipeline` is removed.
 - `scripts/appd`: the `daemon` comment describes the deployed server binary path, not `cmd/main.go`.

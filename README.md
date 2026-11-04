@@ -83,9 +83,9 @@ Visit `http://localhost:3000` to see your application running.
 - `make gen` - Regenerates `_templ.go` files from `.templ` sources (`templ generate`)
 - `make lint` - Installs and runs golangci-lint v2.1.6 over `./...`
 - `make test` - Runs `go test -race -v` with a coverage profile (`coverage.out`)
-- `make coverage` - Runs `sh .scripts/check_coverage.sh`. That script is not tracked in this repo, so this target fails until it is added
+- `make coverage` - Prints per-function coverage from `coverage.out` (`go tool cover -func`). Run `make test` first; it writes the profile
 - `make run` - Runs `make gen`, then `go run main.go -l` (serves on `:3000`)
-- `make prep` - Runs `gen`, `lint`, `test`, and `coverage`
+- `make prep` - Runs `gen`, `lint`, `test` (writes `coverage.out`), and `coverage`
 - `make check` - Runs `lint`
 
 ## Deployment
