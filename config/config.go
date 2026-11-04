@@ -2,77 +2,29 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 )
 
-// @anchor:config:load environment → process config including CORS origins
 // Config is the main configuration for the app
 type Config struct {
-	RedisHost string
-	RedisPass string
-
-	PostgresUser string
-	PostgresPass string
-	PostgresHost string
-	PostgresPort string
-	PostgresDB   string
-
 	// CORSAllowedOrigins are exact origins permitted for app-route CORS.
 	// Empty means same-origin / no CORS.
 	CORSAllowedOrigins []string
 }
 
-// Load loads the config from the environment. Invalid CORS origin tokens
-// return an error (strict reject; never a permissive wildcard fallback).
-func (c *Config) Load() error {
-	redisHost := os.Getenv("REDIS_HOST")
-	c.RedisHost = redisHost
-	if c.RedisHost == "" {
-		log.Println("REDIS_HOST env var is blank", c)
-	}
-
-	redisPass := os.Getenv("REDIS_PASS")
-	c.RedisPass = redisPass
-	if c.RedisPass == "" {
-		log.Println("REDIS_PASS env var is blank", c)
-	}
-
-	c.PostgresUser = os.Getenv("DB_USER")
-	if c.PostgresUser == "" {
-		log.Println("DB_USER env var is blank", c)
-	}
-
-	c.PostgresPass = os.Getenv("DB_PASS")
-	if c.PostgresPass == "" {
-		log.Println("DB_PASS env var is blank", c)
-	}
-
-	c.PostgresHost = os.Getenv("DB_HOST")
-	if c.PostgresHost == "" {
-		log.Println("DB_HOST env var is blank", c)
-	}
-
-	c.PostgresPort = os.Getenv("DB_PORT")
-	if c.PostgresPort == "" {
-		log.Println("DB_PORT env var is blank", c)
-	}
-
-	c.PostgresDB = os.Getenv("DB_NAME")
-	if c.PostgresDB == "" {
-		log.Println("DB_NAME env var is blank", c)
-	}
-
-	origins, err := parseCORSOrigins(os.Getenv("CORS_ALLOWED_ORIGINS"))
+// @anchor:config:load environment → process config including CORS origins
+// Load reads the config through getenv (main passes os.Getenv, tests pass a
+// map). It never logs values. Invalid CORS origin tokens return an error
+// (strict reject; never a permissive wildcard fallback).
+func Load(getenv func(string) string) (Config, error) {
+	origins, err := parseCORSOrigins(getenv("CORS_ALLOWED_ORIGINS"))
 	if err != nil {
-		return err
+		return Config{}, err
 	}
-	c.CORSAllowedOrigins = origins
-	return nil
+	return Config{CORSAllowedOrigins: origins}, nil
 }
 
 // ValidateCORSOrigins checks caller-supplied origins with the same strict

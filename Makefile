@@ -9,15 +9,6 @@ define banner
 	@echo ""; echo "$(GREEN)$(1)$(RESET)"
 endef
 
-# A single place for the env you want when you run the server
-SERVER_ENV = \
-	POSTGRES_DB=tablename \
-	POSTGRES_HOST=localhost \
-	POSTGRES_PASSWORD=asdf \
-	POSTGRES_PORT=5432 \
-	POSTGRES_USER=postgres
-
-
 ### targets ###
 
 gen:
@@ -42,7 +33,7 @@ coverage:
 # Local dev run: build templates, then start server
 run: gen
 	$(call banner,Setting up environment and starting webserver…)
-	@env $(SERVER_ENV) go run main.go -l
+	@go run main.go -l
 
 # “prep” for commit: everything should pass before you push
 prep: gen lint test coverage

@@ -8,8 +8,6 @@ A Go template combining Chi and templ for building modern hypermedia-driven web 
 - **Templ** - Type-safe HTML templates for Go
 - **TailwindCSS** - Utility-first CSS framework
 - **OpenBSD Ready** - Configured for OpenBSD deployment
-- **Redis Support** - Prepared for Redis integration
-- **PostgreSQL Support** - Prepared for PostgreSQL integration
 - **GitHub Actions** - Automated PR and Production workflows
 
 ## Quick Start
@@ -98,13 +96,10 @@ The template includes two GitHub Actions workflows:
 - `SSH_HOST` - Deployment server hostname
 - `SSH_USER` - SSH username
 - `SSH_PRIVATE_KEY` - SSH private key
-- `REDIS_HOST` - Redis server hostname (production only)
-- `REDIS_PASS` - Redis password (production only)
-- `BD_USER` - PostgreSQL user
-- `BD_PASS` - PostgreSQL password
-- `DB_HOST` - PostgreSQL host
-- `DB_PORT` - PostgreSQL port
-- `DB_NAME` - PostgreSQL database name
+
+### Environment Variables
+
+- `CORS_ALLOWED_ORIGINS` - Optional. Unset or blank means no CORS. Comma-separated exact origins (`scheme://host[:port]`, `http` or `https`); a malformed list stops startup.
 
 ## Contributing
 

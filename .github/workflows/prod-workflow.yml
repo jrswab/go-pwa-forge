@@ -71,18 +71,9 @@ jobs:
       - name: Launch new binary
         if: success()
         uses: appleboy/ssh-action@v1.0.3
-        env:
-          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-          REDIS_PASS: ${{ secrets.REDIS_PASS }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PASS: ${{ secrets.DB_PASS }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_NAME: ${{ secrets.DB_NAME }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: REDIS_HOST,REDIS_PASS,DB_HOST,BD_PASS,DB_USER,DB_PORT,DB_NAME
           script: rcctl stop appd && rcctl start appd
 

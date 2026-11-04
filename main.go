@@ -40,8 +40,8 @@ func main() {
 	// Set the output of the log package to the log file
 	log.SetOutput(file)
 
-	cfg := new(config.Config)
-	if err := cfg.Load(); err != nil {
+	cfg, err := config.Load(os.Getenv)
+	if err != nil {
 		log.Fatalf("config: %v", err)
 	}
 
