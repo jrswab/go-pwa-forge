@@ -19,3 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Removed
 
 - `.agents/skills/provenance-log/SKILL.md`, and the `AGENTS.md` provenance-log section that pointed to it.
+- `LOG.md`. Its decisions are recorded in `.mem/http/composition.md` and `.mem/config/cors-origins.md`; `.mem/` replaces it (see `.mem/conventions/decision-records.md`).
+
+### Fixed
+
+- `main.go`, `main_test.go`, `handlers/decoder.go`, and `internal/httpapp/app_test.go`: ignored `Close` errors are now handled (`_ =` in production code, `t.Fatal` in tests), clearing golangci-lint errcheck.
+- `handlers/untils.go`: removed the unused `setPersistentCookie` helper, clearing golangci-lint unused. It had no callers.

@@ -14,4 +14,5 @@ Index of `.mem/`. Read this first, then `terminology.md` and `summary.md`, then 
 - [conventions/](conventions/summary.md) - repo rules for records and working docs
   - [anchor-tags.md](conventions/anchor-tags.md) - `@anchor:` tags and the `TAGS.md` index
   - [working-docs.md](conventions/working-docs.md) - gitignored `docs/plans/` and `docs/notes/`
+  - [decision-records.md](conventions/decision-records.md) - `.mem/` replaces `LOG.md` as the decision record
   - [records-review.md](conventions/records-review.md) - records review and the stale-reference check

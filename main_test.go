@@ -14,12 +14,14 @@ func TestOpenLogFile_CreatesParentDir(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
 
 	if _, err := os.Stat(path); err != nil {
 		t.Fatalf("log file not created: %v", err)
 	}
 	if _, err := f.WriteString("ok\n"); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
 		t.Fatal(err)
 	}
 }
