@@ -30,3 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `config/config.go` `Load`: the blank-variable warnings logged the whole `*Config`, including `RedisPass` and `PostgresPass`, to `logs/site.log`. `Load` no longer logs. `TestLoad_NeverLogsOrReportsSecrets` in `config/config_test.go` covers this.
 - `main.go`, `main_test.go`, `handlers/decoder.go`, and `internal/httpapp/app_test.go`: ignored `Close` errors are now handled (`_ =` in production code, `t.Fatal` in tests), clearing golangci-lint errcheck.
 - `handlers/untils.go`: removed the unused `setPersistentCookie` helper, clearing golangci-lint unused. It had no callers.
+- `.github/workflows/pr-workflow.yml` and `prod-workflow.yml`: the deploy job built with `make pipeline` and `go build cmd/main.go`, both gone. It now runs `make gen` and `go build -o server .`. The npm Tailwind install step is removed; `static/output.css` is committed.
+- `main.go`: a config error is now printed to stderr as well as logged to `logs/site.log`, before the process exits 1.
+- `README.md` Project Structure matches the tracked tree. Development lists the Makefile targets that exist; `make pipeline` is removed. `make coverage` calls `.scripts/check_coverage.sh`, which is not tracked, so it fails.
+- `scripts/appd`: the `daemon` comment describes the deployed server binary path, not `cmd/main.go`.

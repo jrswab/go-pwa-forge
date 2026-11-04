@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"flag"
+	"fmt"
 	"io/fs"
 	"log"
 	"net/http"
@@ -42,6 +43,8 @@ func main() {
 
 	cfg, err := config.Load(os.Getenv)
 	if err != nil {
+		// log output is the file now; print to stderr too so the operator sees it.
+		fmt.Fprintf(os.Stderr, "config: %v\n", err)
 		log.Fatalf("config: %v", err)
 	}
 

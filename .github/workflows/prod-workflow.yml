@@ -37,14 +37,9 @@ jobs:
     if: success()
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
       - uses: actions/setup-go@v4
         with:
           go-version: '>=1.20'
-
-      - name: Install Tailwind CSS
-        run: |
-          npm install tailwindcss @tailwindcss/cli
 
       - name: Install Templ
         run: go install github.com/a-h/templ/cmd/templ@latest
@@ -52,11 +47,11 @@ jobs:
       - name: Get dependencies
         run: go get -t -u ./...
 
-      - name: Build templates and CSS
-        run: make pipeline
+      - name: Generate templ code
+        run: make gen
 
       - name: Build Server Binary
-        run: GOOS=openbsd GOARCH=amd64 go build -o server cmd/main.go
+        run: GOOS=openbsd GOARCH=amd64 go build -o server .
   
       - name: Copy app files to server
         if: success()

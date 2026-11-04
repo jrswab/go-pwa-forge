@@ -3,7 +3,7 @@
 # /etc/rc.d/appd
 #
 
-# The directory where cmd/main.go lives:
+# The deployed server binary (built as ./server by CI, copied to /var/www):
 daemon="/var/www/server"
 daemon_execdir="/var/www"
 
