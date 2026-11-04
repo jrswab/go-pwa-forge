@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `.github/workflows/pr-workflow.yml` and `prod-workflow.yml` deploy job: the server-contact steps (`Copy app binary to server`, `Copy app files to server`, `Launch new binary`) run only when `secrets.SSH_PRIVATE_KEY` is set. A `HAS_DEPLOY_KEY` job `env` entry (`secrets` is available at `jobs.<job_id>.env`, not at `steps.if`) gates them with `success() && env.HAS_DEPLOY_KEY == 'true'`. The build steps still run, so a template repo without SSH secrets passes CI.
 - `Makefile` `gen` and the deploy jobs in `.github/workflows/pr-workflow.yml` and `prod-workflow.yml` generate templ code with the version pinned in `go.mod` (v0.3.819), via `go run github.com/a-h/templ/cmd/templ@<version> generate`. The `Install Templ` step (`go install ...@latest`) is removed, so CI and local `make gen` use the same templ version.
 - `config/config.go` `Load` is now a package function, `Load(getenv func(string) string) (Config, error)`, replacing `(*Config).Load()`. `main.go` passes `os.Getenv`; tests pass a map lookup. It returns a value and reads only `CORS_ALLOWED_ORIGINS`. CORS rules and fail-closed startup are unchanged.
 - `AGENTS.md` restructured: the Datastar and working-docs sections are kept; the anchor-tag and `TAGS.md` rules moved into `TAGS.md`; the `.mem/` rules sit under `## Project Memory`; the records-review step points to `~/.agents/scripts/records-stale-check`; `make check` is the completion bar.

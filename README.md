@@ -108,6 +108,8 @@ The template includes two GitHub Actions workflows:
 - `SSH_USER` - SSH username
 - `SSH_PRIVATE_KEY` - SSH private key
 
+These secrets are optional for the template. Without them the build still runs and the deploy copy/restart steps are skipped.
+
 ### Environment Variables
 
 - `CORS_ALLOWED_ORIGINS` - Optional. Unset or blank means no CORS. Comma-separated exact origins (`scheme://host[:port]`, `http` or `https`); a malformed list stops startup.
