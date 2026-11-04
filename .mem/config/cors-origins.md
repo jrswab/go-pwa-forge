@@ -33,6 +33,6 @@ flowchart LR
 - Rejected: relying on chi defaults for empty or tainted lists.
 - Rejected: turning a malformed non-empty list into "no CORS".
 
-Tests: `config/config_test.go` (`TestParseCORSOrigins_*`, `TestValidateCORSOrigins`, `TestLoad_CORSFromEnv`) and `internal/httpapp/app_test.go` (`TestNew_RejectsWildcardOrigins`).
+Tests: `config/config_test.go` (`TestParseCORSOrigins_*`, `TestValidateCORSOrigins`, `TestLoad_CORS`, `TestLoad_ReadsOnlyCORSVar`, `TestLoad_NeverLogsOrReportsSecrets`) and `internal/httpapp/app_test.go` (`TestNew_RejectsWildcardOrigins`).
 
 Related: [../http/cors.md](../http/cors.md).

@@ -8,8 +8,6 @@ A Go template combining Chi and templ for building modern hypermedia-driven web 
 - **Templ** - Type-safe HTML templates for Go
 - **TailwindCSS** - Utility-first CSS framework
 - **OpenBSD Ready** - Configured for OpenBSD deployment
-- **Redis Support** - Prepared for Redis integration
-- **PostgreSQL Support** - Prepared for PostgreSQL integration
 - **GitHub Actions** - Automated PR and Production workflows
 
 ## Quick Start
@@ -23,7 +21,6 @@ cd your-project-name
 
 # Install dependencies
 go mod tidy
-go install github.com/a-h/templ/cmd/templ@latest
 
 # Start development server
 make run
@@ -37,46 +34,58 @@ Visit `http://localhost:3000` to see your application running.
 
 ```
 .
-├── .github/
-│   └── workflows/                # GitHub Actions workflows
-│       ├── pr-workflow.yml
-│       └── prod-workflow.yml
-├── cmd/
-│   └── main.go                   # Application entrypoint
+├── .github/workflows/            # GitHub Actions: pr-workflow.yml, prod-workflow.yml
+├── .agents/ and .mem/            # Agent skills and project memory
 ├── config/
-│   └── config.go                 # Application configuration
+│   ├── config.go                 # Load, CORS origin parsing and validation
+│   └── config_test.go
 ├── handlers/
-│   └── handlers.go               # Handlers for serving pages
-├── logs/                         # Application logs
-│   └── site.log                  # The actual log file
-├── media/                        # Media files
-├── static/                       # Static assets
-│   ├── input.css                 # TailwindCSS input
-│   ├── manifest.json             # PWA Metadata for your site
-│   ├── offline.html              # What to serve when the client is offline
-│   ├── output.css                # Generated CSS
-│   ├── htmx.min.js               # Currently v2.0.4
-│   └── sw.js                     # Specific Javascript for the PWA Service Worker
-├── views/             
-│   ├── home/        
-│   │   ├── home_content.templ    # The content for the home page
-│   │   └── home_content_templ.go # Generated Go file from Templ
-│   └── layout/        
-│       ├── base.templ            # Main structure of you website (this won't change per page)
-│       └── base_templ.go         # Generated Go file from Templ
+│   ├── decoder.go                # POST body decoding
+│   ├── home.go                   # GET / handler
+│   ├── render.go                 # Templ render helper
+│   └── render_test.go
+├── internal/httpapp/             # Chi router, middleware, and routes (app.go)
+├── media/                        # Untracked; init.sh creates it, served at /media/
+├── scripts/
+│   ├── appd                      # OpenBSD rc.d service script
+│   └── init_obsd.sh              # Installs appd on OpenBSD
+├── static/                       # Embedded and served at /static/
+│   ├── htmx.min.js               # htmx v2.0.4
+│   ├── input.css                 # Tailwind input
+│   ├── manifest.json             # PWA metadata
+│   ├── offline.html              # Served when the client is offline
+│   ├── output.css                # Committed Tailwind output
+│   └── sw.js                     # PWA service worker
+├── views/
+│   ├── home/                     # home_content.templ + generated _templ.go
+│   └── layout/                   # base.templ + generated _templ.go
+├── main.go                       # Process lifecycle: flags, logging, config, listener
+├── main_test.go
+├── init.sh                       # One-shot bootstrap for a new project
+├── Makefile
+├── tailwind.config.js
+├── go.mod
+└── go.sum
 ```
+
+`main.go` creates `logs/` (with `site.log`) at runtime, so it is not in the tree. `init.sh` also creates `logs/` and `media/`.
 
 ## Development
 
 ### Prerequisites
 
-- Go 1.20 or higher
+- Go 1.23 or higher (the `go` directive in `go.mod`)
 - Make
 
 ### Available Commands
 
-- `make run` - Starts a local development server with templ generation and TailwindCSS compilation
-- `make pipeline` - Build assets for deployment (this is used by Github)
+- `make gen` - Regenerates `_templ.go` files from `.templ` sources. Runs templ at the version pinned in `go.mod` (`go run ... generate`); no local templ install is needed
+- `make lint` - Installs and runs golangci-lint v2.1.6 over `./...`
+- `make test` - Runs `go test -race -v` with a coverage profile (`coverage.out`)
+- `make coverage` - Prints per-function coverage from `coverage.out` (`go tool cover -func`). Run `make test` first; it writes the profile
+- `make run` - Runs `make gen`, then `go run main.go -l` (serves on `:3000`)
+- `make prep` - Runs `gen`, `lint`, `test` (writes `coverage.out`), and `coverage`
+- `make check` - Runs `lint`
 
 ## Deployment
 
@@ -98,13 +107,12 @@ The template includes two GitHub Actions workflows:
 - `SSH_HOST` - Deployment server hostname
 - `SSH_USER` - SSH username
 - `SSH_PRIVATE_KEY` - SSH private key
-- `REDIS_HOST` - Redis server hostname (production only)
-- `REDIS_PASS` - Redis password (production only)
-- `BD_USER` - PostgreSQL user
-- `BD_PASS` - PostgreSQL password
-- `DB_HOST` - PostgreSQL host
-- `DB_PORT` - PostgreSQL port
-- `DB_NAME` - PostgreSQL database name
+
+These secrets are optional for the template. Without them the build still runs and the deploy copy/restart steps are skipped.
+
+### Environment Variables
+
+- `CORS_ALLOWED_ORIGINS` - Optional. Unset or blank means no CORS. Comma-separated exact origins (`scheme://host[:port]`, `http` or `https`); a malformed list stops startup.
 
 ## Contributing
 

@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"flag"
+	"fmt"
 	"io/fs"
 	"log"
 	"net/http"
@@ -40,8 +41,10 @@ func main() {
 	// Set the output of the log package to the log file
 	log.SetOutput(file)
 
-	cfg := new(config.Config)
-	if err := cfg.Load(); err != nil {
+	cfg, err := config.Load(os.Getenv)
+	if err != nil {
+		// log output is the file now; print to stderr too so the operator sees it.
+		fmt.Fprintf(os.Stderr, "config: %v\n", err)
 		log.Fatalf("config: %v", err)
 	}
 

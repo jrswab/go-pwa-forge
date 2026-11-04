@@ -4,7 +4,7 @@
 
 ## Boundary
 
-- `main.go` (lifecycle): `-l` selects `:3000` (otherwise `:80`), opens `logs/site.log`, calls `cfg.Load()`, roots `fs.Sub(static, "static")` and `os.DirFS("media")`, then calls `ListenAndServe`.
+- `main.go` (lifecycle): `-l` selects `:3000` (otherwise `:80`), opens `logs/site.log`, calls `config.Load(os.Getenv)`, roots `fs.Sub(static, "static")` and `os.DirFS("media")`, then calls `ListenAndServe`.
 - `httpapp.New(staticFS, mediaFS, corsOrigins)` (`internal/httpapp/app.go`) takes rooted filesystems and returns `http.Handler`.
 
 ```go

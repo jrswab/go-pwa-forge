@@ -9,20 +9,15 @@ define banner
 	@echo ""; echo "$(GREEN)$(1)$(RESET)"
 endef
 
-# A single place for the env you want when you run the server
-SERVER_ENV = \
-	POSTGRES_DB=tablename \
-	POSTGRES_HOST=localhost \
-	POSTGRES_PASSWORD=asdf \
-	POSTGRES_PORT=5432 \
-	POSTGRES_USER=postgres
-
-
 ### targets ###
+
+# templ version comes from go.mod, so the generator matches the runtime library.
+# Lazy (=): go list runs only when gen expands the variable.
+TEMPL_VERSION = $(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
 
 gen:
 	$(call banner,Generating templ.go files…)
-	@templ generate
+	@go run github.com/a-h/templ/cmd/templ@$(TEMPL_VERSION) generate
 
 lint:
 	$(call banner,Installing & running GolangCI-Lint…)
@@ -35,14 +30,14 @@ test:
 
 coverage:
 	$(call banner,Checking code coverage…)
-	@sh .scripts/check_coverage.sh
+	@go tool cover -func=coverage.out
 
 ### Composed targets ###
 
 # Local dev run: build templates, then start server
 run: gen
 	$(call banner,Setting up environment and starting webserver…)
-	@env $(SERVER_ENV) go run main.go -l
+	@go run main.go -l
 
 # “prep” for commit: everything should pass before you push
 prep: gen lint test coverage
