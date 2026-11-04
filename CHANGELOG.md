@@ -39,3 +39,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `README.md` Project Structure matches the tracked tree. Development lists the Makefile targets that exist; `make pipeline` is removed.
 - `scripts/appd`: the `daemon` comment describes the deployed server binary path, not `cmd/main.go`.
 - `views/layout/base_templ.go` is regenerated from `base.templ` with the pinned templ v0.3.819, so the committed page loads Datastar, not htmx. The htmx→Datastar replacement changed the source but left the generated file stale.
+- `.github/workflows/pr-workflow.yml` and `prod-workflow.yml`: the deploy copy step no longer lists `media/*`, which matches no tracked file; media on the server is not touched by CI.
