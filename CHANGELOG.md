@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `AGENTS.md` restructured: the Datastar and working-docs sections are kept; the anchor-tag and `TAGS.md` rules moved into `TAGS.md`; the `.mem/` rules sit under `## Project Memory`; the records-review step points to `~/.agents/scripts/records-stale-check`; `make check` is the completion bar.
 - `TAGS.md` now opens with the anchor-tag format and `TAGS.md` rules; the anchor table is unchanged.
 - `AGENTS.md` no longer references `LOG.md`; decision rationale is recorded in `.mem/`.
+- `.github/workflows/pr-workflow.yml` and `prod-workflow.yml`: every `actions/setup-go` step in the lint, test, and deploy jobs moves from `@v4` with `go-version: '>=1.20'` to `@v5` with `go-version-file: go.mod`, so CI uses the `go` directive in `go.mod` (1.23, resolved to the latest 1.23.x patch; setup-go v5 ignores the `toolchain` line). `README.md` prerequisites now state Go 1.23 or higher.
 - `.github/workflows/pr-workflow.yml` and `prod-workflow.yml` deploy job: the `Get dependencies` step (`go get -t -u ./...`) is now `Download dependencies` (`go mod download`). CI builds with the exact versions in `go.mod`/`go.sum` and no longer upgrades dependencies.
 
 ### Removed

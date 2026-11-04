@@ -74,7 +74,7 @@ Visit `http://localhost:3000` to see your application running.
 
 ### Prerequisites
 
-- Go 1.20 or higher
+- Go 1.23 or higher (the `go` directive in `go.mod`)
 - Make
 
 ### Available Commands
