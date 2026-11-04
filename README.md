@@ -26,6 +26,8 @@ go mod tidy
 make run
 ```
 
+For a new project, run `./init.sh github.com/your-name/your-project` once from the repo root. It accepts only the new module path, renames internal imports, creates runtime directories, tidies dependencies, regenerates templates if `templ` is installed, and removes itself. Set `CORS_ALLOWED_ORIGINS` in the runtime environment for cross-origin access; there is no domain argument.
+
 To run Tailwind use Tailwind's [Standalone CLI](https://tailwindcss.com/blog/standalone-cli). This forge does not use the npm/npx version when running locally.
 
 Visit `http://localhost:3000` to see your application running.
@@ -89,7 +91,7 @@ Visit `http://localhost:3000` to see your application running.
 
 ## Deployment
 
-The template includes two GitHub Actions workflows:
+The template includes two GitHub Actions workflows. Both lint jobs run `make check`, using the golangci-lint version pinned in `Makefile`. Both test jobs run `go test -race ./...` with default vet checks enabled:
 
 ### PR Workflow
 - Triggers on pushes to non-master branches

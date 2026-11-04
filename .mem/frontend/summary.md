@@ -16,7 +16,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 ## Current state
 
-- Datastar replaced HTMX in the layout (commit `2805b3a`). No template references `static/htmx.min.js`, which is still in `static/`.
+- The layout loads Datastar, not HTMX. No template references `static/htmx.min.js`, which is still in `static/`.
 - `views/home/home_content.templ` uses an inline `<script>` for install hints. It loads `/static/get_useragent.js`, which is not in `static/` at HEAD.
 
 ```mermaid

@@ -1,16 +1,14 @@
 #!/bin/sh
 # init.sh - one-shot bootstrap for a new project created from go-pwa-forge.
 #
-# Renames the Go module + all internal imports, swaps the placeholder CORS
-# apex domain, creates the runtime dirs the app needs to start, then tidies,
-# regenerates templ, and removes itself.
+# Renames the Go module + all internal imports, creates the runtime dirs
+# the app needs to start, then tidies, regenerates templ, and removes itself.
 #
 # Usage:
-#   ./scripts/init.sh <new-module-path> [apex-domain]
+#   ./init.sh <new-module-path>
 #
-# Examples:
-#   ./scripts/init.sh github.com/jrswab/my-app
-#   ./scripts/init.sh github.com/jrswab/my-app example.com
+# Example:
+#   ./init.sh github.com/jrswab/my-app
 #
 # Run it from the repo root, once, right after "Use this template".
 
@@ -18,11 +16,10 @@ set -eu
 
 # --- args ---------------------------------------------------------------
 NEW_MODULE="${1:-}"
-NEW_DOMAIN="${2:-}"
 
-if [ -z "$NEW_MODULE" ]; then
-	echo "usage: $0 <new-module-path> [apex-domain]" >&2
-	echo "example: $0 github.com/jrswab/my-app example.com" >&2
+if [ "$#" -ne 1 ] || [ -z "$NEW_MODULE" ]; then
+	echo "usage: $0 <new-module-path>" >&2
+	echo "example: $0 github.com/jrswab/my-app" >&2
 	exit 2
 fi
 
@@ -79,18 +76,9 @@ for f in $(find . -type f \( -name '*.go' -o -name '*.templ' \) -not -path './ve
 	sed_i "s|$OLD_ESC|$NEW_ESC|g" "$f"
 done
 
-# --- 3. CORS apex domain in main.go -------------------------------------
-# The template ships placeholder origins: https://hda.site.com, https://app.site.com
-# Swapping the "site.com" apex keeps the hda./app. subdomain convention.
-if [ -n "$NEW_DOMAIN" ]; then
-	echo ">> swapping CORS apex: site.com -> $NEW_DOMAIN"
-	DOM_ESC=$(esc_rhs "$NEW_DOMAIN")
-	sed_i "s|site\.com|$DOM_ESC|g" main.go
-else
-	echo ">> no apex domain given; leaving CORS origins in main.go as placeholders" >&2
-fi
+echo ">> set CORS_ALLOWED_ORIGINS in the runtime environment if you need cross-origin access"
 
-# --- 4. create runtime dirs the app expects on startup ------------------
+# --- 3. create runtime dirs the app expects on startup ------------------
 # main.go opens logs/site.log (O_CREATE makes the file, not the dir) and
 # serves media/, so both dirs must exist in a fresh checkout.
 echo ">> ensuring runtime dirs exist (logs/, media/)"
@@ -98,7 +86,7 @@ mkdir -p logs media
 [ -f logs/.gitkeep ] || touch logs/.gitkeep
 [ -f media/.gitkeep ] || touch media/.gitkeep
 
-# --- 5. tidy + regenerate (best effort) ---------------------------------
+# --- 4. tidy + regenerate (best effort) ---------------------------------
 if command -v templ >/dev/null 2>&1; then
 	echo ">> templ generate"
 	templ generate
@@ -109,7 +97,7 @@ fi
 echo ">> go mod tidy"
 go mod tidy
 
-# --- 6. clean up --------------------------------------------------------
+# --- 5. clean up --------------------------------------------------------
 echo ">> removing init script"
 rm -f -- "$0"
 

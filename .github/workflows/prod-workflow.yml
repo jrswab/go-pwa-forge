@@ -13,10 +13,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Install Golint
-        run: go install golang.org/x/lint/golint@latest
       - name: Run Linter
-        run: golint ./...
+        run: make check
 
   test:
     runs-on: ubuntu-latest
@@ -27,9 +25,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: linting
-        run: |
-          go test -race -vet=off ./...
+      - name: Run tests
+        run: go test -race ./...
 
   deploy:
     runs-on: ubuntu-latest
