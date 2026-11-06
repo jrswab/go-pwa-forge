@@ -9,7 +9,7 @@ A records review checks `.mem/`, `TAGS.md`, `README.md`, and `CHANGELOG.md` agai
 ```
 
 - Hits can be historical or rejected references. Assess each one against current code.
-- The tool scans `TAGS.md`, `.mem/`, and `changelog.d/`. It does not scan `README.md` or `CHANGELOG.md`, so those need a manual check.
+- In this repo, the tool scans `TAGS.md` and `.mem/`. It also scans `changelog.d/` when present, but that directory does not exist here. It does not scan `README.md` or `CHANGELOG.md`, so those need a manual check.
 
 ```mermaid
 flowchart LR

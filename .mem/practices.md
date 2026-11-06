@@ -7,12 +7,12 @@ Patterns that recur in the code at HEAD.
 - **Test the composed handler.** `internal/httpapp/app_test.go` drives `httpapp.New` directly, not its internals.
 - **Mark intentional limits.** Code marks deliberate limits with `// deliberate:` (see `config/config.go` and `internal/httpapp/app.go`).
 - **Generated code is tracked.** `_templ.go` files are committed. `make gen` regenerates them from `.templ` sources.
-- **Checks.** `make lint` runs golangci-lint v2.1.6. `make test` runs `go test -race`. `make check` runs lint only. CI (`.github/workflows/pr-workflow.yml`) runs `golint ./...` and `go test -race -vet=off ./...`.
+- **Checks.** `make lint` runs golangci-lint v2.1.6, pinned in `Makefile`. `make test` runs `go test -race`. `make check` runs lint only. Both CI workflows (`.github/workflows/pr-workflow.yml` and `prod-workflow.yml`) run `make check` and `go test -race ./...` with default vet checks enabled.
 - **Decision rationale lives in `.mem/`.** `AGENTS.md` (Project Memory) names it as the record.
 
 ```mermaid
 flowchart LR
   change["Code change"] --> lint["make lint"]
   lint --> test["make test"]
-  test --> ci["CI: golint, go test"]
+  test --> ci["CI: make check, go test -race"]
 ```

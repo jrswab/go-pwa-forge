@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `AGENTS.md` no longer references `LOG.md`; decision rationale is recorded in `.mem/`.
 - `.github/workflows/pr-workflow.yml` and `prod-workflow.yml`: every `actions/setup-go` step in the lint, test, and deploy jobs moves from `@v4` with `go-version: '>=1.20'` to `@v5` with `go-version-file: go.mod`, so CI uses the `go` directive in `go.mod` (1.23, resolved to the latest 1.23.x patch; setup-go v5 ignores the `toolchain` line). `README.md` prerequisites now state Go 1.23 or higher.
 - `.github/workflows/pr-workflow.yml` and `prod-workflow.yml` deploy job: the `Get dependencies` step (`go get -t -u ./...`) is now `Download dependencies` (`go mod download`). CI builds with the exact versions in `go.mod`/`go.sum` and no longer upgrades dependencies.
+- `.github/workflows/pr-workflow.yml` and `prod-workflow.yml` lint jobs now run `make check`, using golangci-lint v2.1.6 pinned in `Makefile` instead of `golint@latest`. Test steps are named `Run tests` and run `go test -race ./...` with default vet checks enabled.
+- `init.sh` accepts only the new module path (`./init.sh <new-module-path>`). The optional domain argument and obsolete `site.com` replacement in `main.go` are removed; the script now reminds users to set `CORS_ALLOWED_ORIGINS` in the runtime environment. `README.md` documents the usage and CI gates.
 
 ### Removed
 
